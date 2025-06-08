@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8" />
-<title>Магазин Mini App</title>
+<title>Магазин:</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   body {
@@ -29,9 +29,19 @@
 <script>
   const tg = window.Telegram.WebApp;
 
-  // Дані, які прийшли в Mini App (можна передавати при відкритті)
-  // Для прикладу тут "жорстко" задаємо (пізніше можна передавати через initData)
-  let balance = 120;  // наприклад баланс користувача
+  // Отримуємо дані з URL-параметрів
+  const urlParams = new URLSearchParams(window.location.search);
+
+  let balance = Number(urlParams.get('balance')) || 0;  // якщо параметр відсутній - 0
+  let inventory = {
+    change_card: Number(urlParams.get('change_card')) || 0,
+    inventory_card: Number(urlParams.get('inventory_card')) || 0,
+    rn_change_card: Number(urlParams.get('rn_change_card')) || 0,
+    ch_change_card: Number(urlParams.get('ch_change_card')) || 0
+  };
+
+  // Далі оновлюємо UI з цими даними
+  document.getElementById('balance').innerText = balance;
 
   const shopItems = [
     {id: 50, name: "Змінити картку 🪪", key: "change_card"},
@@ -39,14 +49,6 @@
     {id: 40, name: "Випадкова характеристика 🔁", key: "rn_change_card"},
     {id: 100, name: "Довільна характеристика ✏️", key: "ch_change_card"},
   ];
-
-  // Поточний інвентар (теж можна отримати з бота)
-  let inventory = {
-    change_card: 0,
-    inventory_card: 0,
-    rn_change_card: 0,
-    ch_change_card: 0
-  };
 
   // Відобразити баланс
   function updateBalance() {
@@ -75,7 +77,6 @@
     tg.sendData(JSON.stringify({action: "buy", price: price, key: key}));
   }
 
-  // Отримати початкові дані (баланс та інвентар) - тут заглушка, можна отримати з Telegram WebApp initData або через API
   function init() {
     updateBalance();
     showItems();
