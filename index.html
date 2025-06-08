@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Моя Mini App</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      background-color: var(--tg-theme-bg-color);
+      color: var(--tg-theme-text-color);
+      font-family: sans-serif;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Привіт із Mini App!</h1>
+  <button onclick="sendData()">Надіслати дані в бот</button>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // розгорнути вікно
+
+    function sendData() {
+      tg.sendData("Це дані з Mini App!"); // передати дані в бот
+    }
+  </script>
+</body>
+</html>
