@@ -1,29 +1,88 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Моя Mini App</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      background-color: var(--tg-theme-bg-color);
-      color: var(--tg-theme-text-color);
-      font-family: sans-serif;
-      padding: 20px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Магазин Mini App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  body {
+    font-family: sans-serif;
+    background-color: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+    padding: 20px;
+  }
+  button {
+    margin: 5px 0;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+  }
+</style>
 </head>
 <body>
-  <h1>Привіт із Mini App!</h1>
-  <button onclick="sendData()">Надіслати дані в бот</button>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // розгорнути вікно
+<h2>Магазин 🛒</h2>
+<p>Баланс: <span id="balance">завантаження...</span>🔩</p>
 
-    function sendData() {
-      tg.sendData("Це дані з Mini App!"); // передати дані в бот
+<div id="items"></div>
+
+<script>
+  const tg = window.Telegram.WebApp;
+
+  // Дані, які прийшли в Mini App (можна передавати при відкритті)
+  // Для прикладу тут "жорстко" задаємо (пізніше можна передавати через initData)
+  let balance = 120;  // наприклад баланс користувача
+
+  const shopItems = [
+    {id: 50, name: "Змінити картку 🪪", key: "change_card"},
+    {id: 70, name: "Бонусний інвентар 🎒", key: "inventory_card"},
+    {id: 40, name: "Випадкова характеристика 🔁", key: "rn_change_card"},
+    {id: 100, name: "Довільна характеристика ✏️", key: "ch_change_card"},
+  ];
+
+  // Поточний інвентар (теж можна отримати з бота)
+  let inventory = {
+    change_card: 0,
+    inventory_card: 0,
+    rn_change_card: 0,
+    ch_change_card: 0
+  };
+
+  // Відобразити баланс
+  function updateBalance() {
+    document.getElementById("balance").innerText = balance;
+  }
+
+  // Відобразити товари
+  function showItems() {
+    const container = document.getElementById("items");
+    container.innerHTML = "";
+    shopItems.forEach(item => {
+      const btn = document.createElement("button");
+      btn.innerText = `${item.name} — ${item.id}🔩`;
+      btn.onclick = () => buyItem(item.id, item.key);
+      container.appendChild(btn);
+    });
+  }
+
+  // Функція покупки
+  function buyItem(price, key) {
+    if (balance < price) {
+      alert(`Недостатньо ${price - balance}🔩 для покупки`);
+      return;
     }
-  </script>
+    // Відправляємо дані в бот
+    tg.sendData(JSON.stringify({action: "buy", price: price, key: key}));
+  }
+
+  // Отримати початкові дані (баланс та інвентар) - тут заглушка, можна отримати з Telegram WebApp initData або через API
+  function init() {
+    updateBalance();
+    showItems();
+  }
+
+  init();
+</script>
+
 </body>
 </html>
